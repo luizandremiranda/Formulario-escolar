@@ -1,307 +1,214 @@
-/* style.css */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Referências aos elementos HTML
+    const formAluno = document.getElementById('form-aluno');
+    const listaAlunosCadastrados = document.getElementById('lista-alunos-cadastrados');
+    const pesquisaAlunoInput = document.getElementById('pesquisaAluno');
+    const detalhesAlunoDiv = document.getElementById('detalhes-aluno');
+    const cancelarCadastroBtn = document.getElementById('cancelarCadastro');
 
-/* Variáveis CSS para as cores do SENAI */
-:root {
-    --senai-blue: #004a8f; /* Azul escuro */
-    --senai-red: #e30022;  /* Vermelho */
-    --senai-light-blue: #007bff; /* Azul mais claro para detalhes */
-    --senai-gray: #f8f9fa; /* Cinza claro para fundos */
-    --senai-dark-gray: #343a40; /* Cinza escuro para textos */
-    --senai-white: #ffffff;
-    --senai-black: #212529;
-}
+    // Array para armazenar os alunos. Tentamos carregar do localStorage ou inicializamos vazio.
+    let students = JSON.parse(localStorage.getItem('students')) || [];
 
-/* Estilos globais e reset */
-body {
-    font-family: 'Roboto', sans-serif; /* Fonte moderna e legível */
-    margin: 0;
-    padding: 0;
-    background-color: var(--senai-gray);
-    color: var(--senai-dark-gray);
-    line-height: 1.6;
-}
+    // Função para gerar dados aleatórios para os alunos iniciais
+    function generateRandomStudent(name) {
+        const courses = ['Informática', 'Eletrotécnica', 'Mecânica', 'Automação Industrial', 'Edificações'];
+        const shifts = ['Manhã', 'Tarde', 'Noite'];
+        const genders = ['Masculino', 'Feminino', 'Não Binário'];
+        const randomDate = (start, end) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px 0;
-}
-
-/* Cabeçalho */
-header {
-    background-color: var(--senai-blue);
-    color: var(--senai-white);
-    padding: 10px 0;
-    border-bottom: 5px solid var(--senai-red);
-    text-align: center;
-}
-
-header .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-}
-
-.logo-senai {
-    height: 60px; /* Ajuste o tamanho do logo conforme necessário */
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.2em;
-    color: var(--senai-white);
-}
-
-/* Main Content */
-main {
-    padding: 40px 0;
-}
-
-section {
-    background-color: var(--senai-white);
-    padding: 30px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-section h2 {
-    color: var(--senai-blue);
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 1.8em;
-    border-bottom: 2px solid var(--senai-red);
-    padding-bottom: 10px;
-}
-
-section h3 {
-    color: var(--senai-dark-gray);
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-size: 1.4em;
-}
-
-/* Formulário */
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: var(--senai-dark-gray);
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group input[type="date"],
-.form-group select,
-.form-group textarea {
-    width: calc(100% - 22px); /* Considerando padding e border */
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 1em;
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="tel"]:focus,
-.form-group input[type="date"]:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--senai-light-blue);
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Efeito de foco */
-    outline: none;
-}
-
-.radio-group,
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.radio-group label,
-.checkbox-group label {
-    margin-bottom: 0;
-    font-weight: normal;
-}
-
-.radio-group input[type="radio"],
-.checkbox-group input[type="checkbox"] {
-    margin-right: 5px;
-}
-
-/* Botões */
-.form-actions {
-    margin-top: 30px;
-    text-align: center;
-}
-
-.form-actions button {
-    background-color: var(--senai-blue);
-    color: var(--senai-white);
-    border: none;
-    padding: 12px 25px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.1em;
-    margin: 0 10px;
-    transition: background-color 0.3s ease;
-}
-
-.form-actions button:hover {
-    background-color: #003366; /* Tom mais escuro do azul */
-}
-
-.form-actions button[type="reset"] {
-    background-color: #6c757d; /* Cinza para o botão Limpar */
-}
-
-.form-actions button[type="reset"]:hover {
-    background-color: #5a6268;
-}
-
-#cancelarCadastro {
-    background-color: var(--senai-red);
-}
-
-#cancelarCadastro:hover {
-    background-color: #b2001a;
-}
-
-/* Seção de Consulta de Alunos */
-#consulta-alunos .form-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#consulta-alunos .form-group label {
-    flex-shrink: 0;
-}
-
-#pesquisaAluno {
-    flex-grow: 1;
-}
-
-.lista-alunos {
-    margin-top: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.lista-alunos ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.lista-alunos li {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e9ecef;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.lista-alunos li:last-child {
-    border-bottom: none;
-}
-
-.lista-alunos li:hover {
-    background-color: #e2f0ff; /* Azul claro ao passar o mouse */
-}
-
-.lista-alunos li.selected {
-    background-color: var(--senai-light-blue);
-    color: var(--senai-white);
-}
-
-.lista-alunos li.selected .delete-btn {
-    color: var(--senai-white);
-}
-
-.delete-btn {
-    background: none;
-    border: none;
-    color: var(--senai-red);
-    cursor: pointer;
-    font-size: 1.2em;
-    transition: color 0.2s ease;
-}
-
-.delete-btn:hover {
-    color: #b2001a;
-}
-
-.detalhes-aluno {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    background-color: #f1f7fc; /* Fundo azul claro para detalhes */
-    display: none; /* Escondido por padrão, será exibido via JS */
-}
-
-.detalhes-aluno h4 {
-    color: var(--senai-blue);
-    margin-bottom: 15px;
-    border-bottom: 1px dashed #ced4da;
-    padding-bottom: 5px;
-}
-
-.detalhes-aluno p {
-    margin-bottom: 8px;
-}
-
-.detalhes-aluno p strong {
-    color: var(--senai-dark-gray);
-}
-
-/* Rodapé */
-footer {
-    background-color: var(--senai-dark-gray);
-    color: var(--senai-white);
-    text-align: center;
-    padding: 20px 0;
-    margin-top: 40px;
-}
-
-footer p {
-    margin: 0;
-    font-size: 0.9em;
-}
-
-/* Responsividade básica */
-@media (max-width: 768px) {
-    header .container {
-        flex-direction: column;
-        gap: 10px;
+        return {
+            id: Date.now() + Math.floor(Math.random() * 1000), // ID único
+            nomeCompleto: name,
+            dataNascimento: randomDate(new Date(2000, 0, 1), new Date(2006, 11, 31)),
+            cpf: Math.floor(Math.random() * 999) + '.' + Math.floor(Math.random() * 999) + '.' + Math.floor(Math.random() * 999) + '-' + Math.floor(Math.random() * 99),
+            rg: Math.floor(Math.random() * 99) + '.' + Math.floor(Math.random() * 999) + '.' + Math.floor(Math.random() * 999) + '-' + Math.floor(Math.random() * 9),
+            sexoGenero: genders[Math.floor(Math.random() * genders.length)],
+            nacionalidade: 'Brasileira',
+            email: name.toLowerCase().replace(/\s/g, '.') + '@example.com',
+            telefone: '(XX) XXXX-XXXX'.replace(/X/g, () => Math.floor(Math.random() * 10)),
+            celular: '(XX) 9XXXX-XXXX'.replace(/X/g, () => Math.floor(Math.random() * 10)),
+            endereco: 'Rua Aleatória, ' + Math.floor(Math.random() * 1000),
+            cidade: 'Cidade Fictícia',
+            estado: 'UF',
+            cep: Math.floor(Math.random() * 99999) + '-' + Math.floor(Math.random() * 999),
+            matricula: 'SENAI' + Math.floor(Math.random() * 100000),
+            curso: courses[Math.floor(Math.random() * courses.length)],
+            serieAno: Math.floor(Math.random() * 3) + 1 + 'º Ano',
+            turma: 'A' + Math.floor(Math.random() * 5),
+            turno: shifts[Math.floor(Math.random() * shifts.length)],
+            dataMatricula: randomDate(new Date(2023, 0, 1), new Date()),
+            nomeResponsavel: Math.random() > 0.5 ? 'Responsável ' + name : '',
+            parentesco: Math.random() > 0.5 ? 'Pai/Mãe' : '',
+            telefoneResponsavel: Math.random() > 0.5 ? '(XX) XXXX-XXXX'.replace(/X/g, () => Math.floor(Math.random() * 10)) : '',
+            emailResponsavel: Math.random() > 0.5 ? 'responsavel.' + name.toLowerCase().replace(/\s/g, '.') + '@example.com' : '',
+            deficiencia: Math.random() > 0.8 ? 'Sim' : 'Não',
+            atendimentoEspecial: Math.random() > 0.8 ? 'Necessita de apoio pedagógico' : '',
+            alergias: Math.random() > 0.9 ? 'Amendoim' : '',
+            observacoes: 'Aluno dedicado.',
+            termosUso: true,
+            autorizarImagem: Math.random() > 0.5,
+        };
     }
 
-    header h1 {
-        font-size: 1.8em;
+    // Se não houver alunos no localStorage, adiciona os 5 iniciais
+    if (students.length === 0) {
+        const initialStudentsNames = ['Luiz André', 'André', 'Renata', 'Daiane', 'Everton'];
+        students = initialStudentsNames.map(name => generateRandomStudent(name));
+        saveStudents();
     }
 
-    .form-actions button {
-        width: 100%;
-        margin: 10px 0;
+    // 2. Salvar alunos no localStorage
+    function saveStudents() {
+        localStorage.setItem('students', JSON.stringify(students));
     }
 
-    .radio-group, .checkbox-group {
-        flex-direction: column;
-        align-items: flex-start;
+    // 3. Renderizar a lista de alunos
+    function renderStudentList(filter = '') {
+        listaAlunosCadastrados.innerHTML = ''; // Limpa a lista antes de renderizar
+        const ul = document.createElement('ul');
+
+        const filteredStudents = students.filter(student =>
+            student.nomeCompleto.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        if (filteredStudents.length === 0) {
+            ul.innerHTML = '<li style="text-align: center; padding: 15px;">Nenhum aluno encontrado.</li>';
+        } else {
+            filteredStudents.forEach(student => {
+                const li = document.createElement('li');
+                li.dataset.id = student.id; // Armazena o ID do aluno no elemento li
+                li.innerHTML = `
+                    <span>${student.nomeCompleto} (${student.matricula})</span>
+                    <button class="delete-btn" title="Excluir Aluno"><i class="fas fa-trash-alt"></i></button>
+                `;
+                ul.appendChild(li);
+            });
+        }
+        listaAlunosCadastrados.appendChild(ul);
+        detalhesAlunoDiv.style.display = 'none'; // Esconde os detalhes ao re-renderizar a lista
     }
-}
+
+    // 4. Exibir detalhes do aluno
+    function displayStudentDetails(studentId) {
+        const student = students.find(s => s.id == studentId);
+        if (!student) {
+            detalhesAlunoDiv.style.display = 'none';
+            return;
+        }
+
+        detalhesAlunoDiv.innerHTML = `
+            <h4>Detalhes do Aluno: ${student.nomeCompleto}</h4>
+            <p><strong>Matrícula:</strong> ${student.matricula}</p>
+            <p><strong>Curso:</strong> ${student.curso}</p>
+            <p><strong>Turno:</strong> ${student.turno}</p>
+            <p><strong>Data de Nascimento:</strong> ${student.dataNascimento}</p>
+            <p><strong>CPF:</strong> ${student.cpf || 'Não informado'}</p>
+            <p><strong>RG:</strong> ${student.rg || 'Não informado'}</p>
+            <p><strong>Sexo/Gênero:</strong> ${student.sexoGenero}</p>
+            <p><strong>Nacionalidade:</strong> ${student.nacionalidade}</p>
+            <p><strong>E-mail:</strong> ${student.email}</p>
+            <p><strong>Celular:</strong> ${student.celular}</p>
+            <p><strong>Endereço:</strong> ${student.endereco}, ${student.cidade} - ${student.estado}, CEP: ${student.cep}</p>
+            <p><strong>Série/Ano:</strong> ${student.serieAno}</p>
+            <p><strong>Turma:</strong> ${student.turma}</p>
+            <p><strong>Data de Matrícula:</strong> ${student.dataMatricula}</p>
+            ${student.nomeResponsavel ? `<p><strong>Responsável:</strong> ${student.nomeResponsavel} (${student.parentesco})</p>` : ''}
+            ${student.telefoneResponsavel ? `<p><strong>Tel. Responsável:</strong> ${student.telefoneResponsavel}</p>` : ''}
+            ${student.emailResponsavel ? `<p><strong>Email Responsável:</strong> ${student.emailResponsavel}</p>` : ''}
+            <p><strong>Possui Deficiência:</strong> ${student.deficiencia}</p>
+            ${student.atendimentoEspecial ? `<p><strong>Atendimento Especial:</strong> ${student.atendimentoEspecial}</p>` : ''}
+            ${student.alergias ? `<p><strong>Alergias:</strong> ${student.alergias}</p>` : ''}
+            ${student.observacoes ? `<p><strong>Observações:</strong> ${student.observacoes}</p>` : ''}
+            <p><strong>Termos de Uso Aceitos:</strong> ${student.termosUso ? 'Sim' : 'Não'}</p>
+            <p><strong>Autoriza Uso de Imagem:</strong> ${student.autorizarImagem ? 'Sim' : 'Não'}</p>
+        `;
+        detalhesAlunoDiv.style.display = 'block';
+
+        // Remove a classe 'selected' de todos os itens e adiciona ao item clicado
+        document.querySelectorAll('.lista-alunos li').forEach(item => {
+            item.classList.remove('selected');
+        });
+        document.querySelector(`.lista-alunos li[data-id="${studentId}"]`).classList.add('selected');
+    }
+
+    // 5. Adicionar novo aluno
+    formAluno.addEventListener('submit', (event) => {
+        event.preventDefault(); // Impede o recarregamento da página
+
+        const newStudent = {
+            id: Date.now(), // ID único baseado no timestamp
+            nomeCompleto: document.getElementById('nomeCompleto').value,
+            dataNascimento: document.getElementById('dataNascimento').value,
+            cpf: document.getElementById('cpf').value,
+            rg: document.getElementById('rg').value,
+            sexoGenero: document.getElementById('sexoGenero').value,
+            nacionalidade: document.getElementById('nacionalidade').value,
+            email: document.getElementById('email').value,
+            telefone: document.getElementById('telefone').value,
+            celular: document.getElementById('celular').value,
+            endereco: document.getElementById('endereco').value,
+            cidade: document.getElementById('cidade').value,
+            estado: document.getElementById('estado').value,
+            cep: document.getElementById('cep').value,
+            matricula: document.getElementById('matricula').value,
+            curso: document.getElementById('curso').value,
+            serieAno: document.getElementById('serieAno').value,
+            turma: document.getElementById('turma').value,
+            turno: document.querySelector('input[name="turno"]:checked').value,
+            dataMatricula: document.getElementById('dataMatricula').value,
+            nomeResponsavel: document.getElementById('nomeResponsavel').value,
+            parentesco: document.getElementById('parentesco').value,
+            telefoneResponsavel: document.getElementById('telefoneResponsavel').value,
+            emailResponsavel: document.getElementById('emailResponsavel').value,
+            deficiencia: document.querySelector('input[name="deficiencia"]:checked').value,
+            atendimentoEspecial: document.getElementById('atendimentoEspecial').value,
+            alergias: document.getElementById('alergias').value,
+            observacoes: document.getElementById('observacoes').value,
+            termosUso: document.getElementById('termosUso').checked,
+            autorizarImagem: document.getElementById('autorizarImagem').checked,
+        };
+
+        students.push(newStudent);
+        saveStudents();
+        renderStudentList();
+        formAluno.reset(); // Limpa o formulário após o cadastro
+        alert('Aluno cadastrado com sucesso!');
+    });
+
+    // 6. Pesquisar aluno
+    pesquisaAlunoInput.addEventListener('input', (event) => {
+        renderStudentList(event.target.value);
+    });
+
+    // 7. Excluir aluno e exibir detalhes ao clicar
+    listaAlunosCadastrados.addEventListener('click', (event) => {
+        const li = event.target.closest('li');
+        if (!li) return; // Clicou fora de um item da lista
+
+        const studentId = li.dataset.id;
+
+        if (event.target.classList.contains('delete-btn') || event.target.closest('.delete-btn')) {
+            // Clicou no botão de excluir
+            if (confirm('Tem certeza que deseja excluir este aluno?')) {
+                students = students.filter(student => student.id != studentId);
+                saveStudents();
+                renderStudentList(pesquisaAlunoInput.value);
+                detalhesAlunoDiv.style.display = 'none'; // Esconde os detalhes após exclusão
+            }
+        } else {
+            // Clicou no nome do aluno para ver detalhes
+            displayStudentDetails(studentId);
+        }
+    });
+
+    // 8. Botão Cancelar
+    cancelarCadastroBtn.addEventListener('click', () => {
+        formAluno.reset();
+        detalhesAlunoDiv.style.display = 'none';
+        // Opcional: rolar para o topo ou para a seção de consulta
+        // document.getElementById('consulta-alunos').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Renderiza a lista inicial de alunos ao carregar a página
+    renderStudentList();
+});
